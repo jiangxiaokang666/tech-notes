@@ -1,0 +1,50 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { MarkdownHeading } from 'astro';
+import BaseLayout from './BaseLayout.astro';
+import { routes } from '../lib/site';
+import type { getLearningSeries } from '../lib/learning';
+import '../styles/article.css';
+interface Props {
+  article: CollectionEntry<'learning'>;
+  topic: Awaited<ReturnType<typeof getLearningSeries>>[number];
+  index: number;
+  headings: MarkdownHeading[];
+}
+const { article, topic, index, headings } = Astro.props;
+const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+const previous = topic.chapters[index - 1];
+const next = topic.chapters[index + 1];
+---
+<BaseLayout title={article.data.title} description={article.data.description}>
+  <div class="reading-breadcrumb"><a href={routes.section('learning')}>学习笔记</a><span>/</span><a href={routes.learningSeries(topic.id)}>{topic.title}</a></div>
+  <div class="reading-grid">
+    <aside class="chapter-sidebar"><details open><summary>专题章节 <span aria-hidden="true">⌄</span></summary><nav aria-label="专题章节">{topic.chapters.map((chapter) => <a href={routes.learningArticle(chapter.id)} aria-current={chapter.id === article.id ? 'page' : undefined}><span>{String(chapter.data.seriesOrder).padStart(2,'0')}</span>{chapter.data.title}</a>)}</nav></details></aside>
+    <article class="reading-article">
+      <header class="article-header"><span class="eyebrow">{article.data.category} / CHAPTER {article.data.seriesOrder}</span><h1>{article.data.title}</h1><p>{article.data.description}</p><div class="article-meta"><span>发布于 <time datetime={article.data.pubDate.toISOString()}>{article.data.pubDate.toISOString().slice(0,10)}</time>{article.data.updatedDate && <> · 更新于 <time datetime={article.data.updatedDate.toISOString()}>{article.data.updatedDate.toISOString().slice(0,10)}</time></>}</span></div><div class="tags">{article.data.tags.map((tag) => <span>#{tag}</span>)}</div>
+      {article.data.sourceUrl && <p class="source-note">整理自个人笔记仓库 · <a href={article.data.sourceUrl}>查看原始笔记 ↗</a></p>}</header>
+      <div class="article-content"><slot /></div>
+      <nav class="chapter-pagination" aria-label="相邻章节">{previous ? <a href={routes.learningArticle(previous.id)}><span>← 上一章</span><strong>{previous.data.title}</strong></a> : <span />}{next ? <a href={routes.learningArticle(next.id)}><span>下一章 →</span><strong>{next.data.title}</strong></a> : <a href={routes.learningSeries(topic.id)}><span>已到最后一章</span><strong>返回专题目录 →</strong></a>}</nav>
+    </article>
+    <aside class="toc-sidebar"><details open><summary>本页目录 <span aria-hidden="true">⌄</span></summary><nav aria-label="本页目录">{toc.map((heading) => <a href={`#${heading.slug}`} class:list={{'toc-nested': heading.depth === 3}} data-heading={heading.slug}>{heading.text}</a>)}</nav></details></aside>
+  </div>
+</BaseLayout>
+<script>
+  const mobile = matchMedia('(max-width: 900px)');
+  const panels = document.querySelectorAll<HTMLDetailsElement>('.reading-grid aside details');
+  function adapt() { panels.forEach((panel) => { panel.open = !mobile.matches; }); }
+  adapt();
+  mobile.addEventListener('change', adapt);
+  const links = document.querySelectorAll<HTMLAnchorElement>('[data-heading]');
+  const sections = Array.from(links).map((link) => document.getElementById(link.dataset.heading ?? '')).filter((element): element is HTMLElement => element !== null);
+  function highlight() {
+    let active = sections[0]?.id;
+    for (const section of sections) { if (section.getBoundingClientRect().top <= 150) active = section.id; }
+    links.forEach((link) => { if (link.dataset.heading === active) link.setAttribute('aria-current', 'location'); else link.removeAttribute('aria-current'); });
+  }
+  let scheduled = false;
+  window.addEventListener('scroll', () => {
+    if (!scheduled) { scheduled = true; requestAnimationFrame(() => { highlight(); scheduled = false; }); }
+  }, { passive: true });
+  highlight();
+</script>

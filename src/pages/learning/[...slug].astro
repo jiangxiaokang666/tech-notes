@@ -1,0 +1,13 @@
+---
+import { render } from 'astro:content';
+import LearningLayout from '../../layouts/LearningLayout.astro';
+import { getLearningSeries } from '../../lib/learning';
+export async function getStaticPaths() {
+  return (await getLearningSeries()).flatMap((topic) => topic.chapters.map((article, index) => ({
+    params: {slug: article.id}, props: {article, topic, index},
+  })));
+}
+const {article, topic, index} = Astro.props;
+const { Content, headings } = await render(article);
+---
+<LearningLayout article={article} topic={topic} index={index} headings={headings}><Content /></LearningLayout>

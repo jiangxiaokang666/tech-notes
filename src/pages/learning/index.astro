@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getLearningSeries } from '../../lib/learning';
+import { routes } from '../../lib/site';
+import '../../styles/article.css';
+const series = await getLearningSeries();
+const categories = [...new Set(series.map((topic) => topic.category))];
+---
+<BaseLayout title="学习笔记" description="按分类与专题整理的学习笔记，涵盖 AI 工程与 C++ 等方向。">
+  <section class="page-intro"><span class="eyebrow">LEARN / CONNECT / REFLECT</span><h1>学习笔记</h1><p>以专题串联知识，用章节记录理解。</p><p class="small">{series.length} 个专题 · {series.reduce((count, topic) => count + topic.chapters.length, 0)} 个已发布章节</p></section>
+  <div class="learning-index">{categories.map((category) => <section class="learning-category"><h2>{category}</h2><div class="series-grid">{series.filter((topic) => topic.category === category).map((topic) => <a class="category-card" href={routes.learningSeries(topic.id)}><span class="eyebrow">{topic.chapters.length} CHAPTERS</span><h3>{topic.title}</h3><p>{topic.description}</p><span class="text-link">查看专题目录 →</span></a>)}</div></section>)}</div>
+</BaseLayout>

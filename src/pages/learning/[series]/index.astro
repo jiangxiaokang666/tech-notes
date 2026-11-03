@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getLearningSeries } from '../../../lib/learning';
+import { routes } from '../../../lib/site';
+import '../../../styles/article.css';
+export async function getStaticPaths() {
+  return (await getLearningSeries()).map((topic) => ({params: {series: topic.id}, props: {topic}}));
+}
+const { topic } = Astro.props;
+---
+<BaseLayout title={topic.title} description={topic.description}>
+  <section class="page-intro"><a class="text-link" href={routes.section('learning')}>← 学习笔记</a><span class="eyebrow">{topic.category} / {topic.chapters.length} CHAPTERS</span><h1>{topic.title}</h1><p>{topic.description}</p></section>
+  <section class="chapter-list" aria-label="专题章节"><h2>专题目录</h2><ol>{topic.chapters.map((chapter) => <li><a href={routes.learningArticle(chapter.id)}><span class="chapter-number">{String(chapter.data.seriesOrder).padStart(2,'0')}</span><span><strong>{chapter.data.title}</strong><span class="chapter-description">{chapter.data.description}</span></span><span aria-hidden="true">↗</span></a></li>)}</ol></section>
+</BaseLayout>

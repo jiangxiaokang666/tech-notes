@@ -1,0 +1,14 @@
+---
+import type { Article } from '../lib/content';
+import { sections, routes } from '../lib/site';
+interface Props { article: Article; }
+const { article } = Astro.props;
+const section = sections.find((item) => item.key === article.collection);
+const date = article.data.pubDate.toISOString().slice(0, 10);
+---
+<article class="article-row">
+  <div class="article-meta"><span>{section?.label}</span><time datetime={date}>{date}</time></div>
+  <h3>{article.collection === 'learning' ? <a href={routes.learningArticle(article.id)}>{article.data.title}</a> : article.data.title}</h3>
+  <p>{article.data.description}</p>
+  <div class="article-bottom"><div class="tags">{article.data.tags.map((tag) => <span>#{tag}</span>)}</div>{article.collection === 'learning' ? <a class="text-link" href={routes.learningArticle(article.id)}>阅读笔记 →</a> : <span class="muted small">正文待开放</span>}</div>
+</article>

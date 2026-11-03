@@ -1,0 +1,35 @@
+<label class="theme-control" data-theme-control hidden>
+  <span>外观</span>
+  <select aria-label="选择外观主题" data-theme-select>
+    <option value="system">跟随系统</option>
+    <option value="light">浅色</option>
+    <option value="dark">深色</option>
+  </select>
+</label>
+<script>
+  const select = document.querySelector<HTMLSelectElement>('[data-theme-select]');
+  const control = document.querySelector<HTMLElement>('[data-theme-control]');
+  const media = window.matchMedia('(prefers-color-scheme: dark)');
+  type Theme = 'system' | 'light' | 'dark';
+  const normalize = (value: string | null): Theme => value === 'light' || value === 'dark' ? value : 'system';
+  let preference: Theme = 'system';
+  try { preference = normalize(localStorage.getItem('tech-notes-theme')); } catch { /* Storage may be blocked. */ }
+  function apply() {
+    document.documentElement.dataset.theme = preference === 'system' ? (media.matches ? 'dark' : 'light') : preference;
+    if (select) select.value = preference;
+  }
+  apply();
+  if (control) control.hidden = false;
+  select?.addEventListener('change', () => {
+    preference = normalize(select.value);
+    try { localStorage.setItem('tech-notes-theme', preference); } catch { /* Keep the choice for this page. */ }
+    apply();
+  });
+  media.addEventListener('change', apply);
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'tech-notes-theme' || event.key === null) {
+      preference = normalize(event.newValue);
+      apply();
+    }
+  });
+</script>

@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { sections, routes } from '../../lib/site';
+export function getStaticPaths() {
+  return sections.filter((section) => section.key !== 'learning').map((section) => ({ params: { section: section.key }, props: { section } }));
+}
+const { section } = Astro.props;
+---
+<BaseLayout title={section.label} description={section.description}>
+  <section class="page-intro"><span class="eyebrow">{section.mark} / TECH NOTES</span><h1>{section.label}</h1><p>{section.description}</p></section>
+  <div class="empty-state"><h2>内容正在整理中</h2><p>这里将展示{section.label}的内容列表与文章。敬请期待。</p><a class="text-link" href={routes.home}>返回首页 <span aria-hidden="true">→</span></a></div>
+</BaseLayout>
