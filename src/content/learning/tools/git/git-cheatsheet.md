@@ -4,7 +4,11 @@ description: 以「命令 + 典型场景 + 易错点」记录日常最容易用�
 pubDate: 2026-11-11
 category: 开发工具
 tags: [Git, 版本控制, 冲突处理]
-type: practice
+type: learning
+series: git-daily
+seriesTitle: Git 日常操作
+seriesDescription: 按命令整理日常最容易用错的 Git 操作，每条给出可照抄的写法和易错点。
+seriesOrder: 1
 ---
 
 本文只记录实际会照抄的命令，每条都标出适用场景和最常见的误操作。
