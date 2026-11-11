@@ -9,7 +9,7 @@
 仓库内目前包含 9 篇真实内容（8 篇学习笔记、1 篇 Git 实践）和 6 篇明确标注的示例（其中 1 篇草稿）。
 第一阶段范围已收缩到 Task 5（算法题解）：技术实践与技术思考模块页面、Pagefind 搜索与阅读体验增强、
 全站验收移出本次范围，记录在 `docs/requirements-phase1.md` 的 1.3 节。
-首页与顶部导航目前只展示学习笔记、算法题解两个入口；技术实践与技术思考的集合、占位页仍在仓库中，只是不再展示。
+顶部导航只保留 首页 / 学习笔记 / 算法题解；技术实践与技术思考的集合、占位页仍在仓库中，只是不再展示。
 
 ## 环境要求
 
@@ -50,6 +50,7 @@ npm run preview
 - `public/images/`：直接复制到构建产物的图片。
 - `src/components/`：复用组件。
 - `src/layouts/`：页面和文章布局。
+- `src/lib/`：内容查询、专题汇总、Schema 与站点配置。
 - `src/content/learning/`：学习笔记。
 - `src/content/algorithms/`：算法题解。
 - `src/content/practices/`：技术实践。
@@ -151,7 +152,8 @@ npm run build
 - `src/components/Header.astro`：公共导航与当前页标记。
 - `src/components/ThemeToggle.astro`：浅色、深色和跟随系统三种模式。
 - `src/components/ArticleCard.astro`：首页文章摘要，学习笔记提供正文链接，其他模块不提供未实现的正文链接。
-- `src/lib/site.ts`：统一管理站点信息、分类、导航和已实现的路由。
+- `src/lib/site.ts`：统一管理站点信息、分类、导航和已实现的路由。站点名为 `JXK · Tech Notes`，
+  头部品牌直接读取它；子页面标题用 `|` 连接页面名与站点名。
 - `src/styles/global.css`：原生 CSS、主题变量和响应式布局，最大容器宽度 1200px。
 
 主题保存在浏览器 `localStorage` 的 `tech-notes-theme` 键中；存储不可用时，
@@ -171,7 +173,7 @@ npm run build
 技术实践与技术思考的占位页仍可访问，但没有入口。
 全站不设页脚，页面底部由各内容容器的下内边距收尾（`.home-columns`、`.prose`、`.learning-index` 等）。
 
-验证：`npm run check` 检查 21 个文件，0 errors / 0 warnings / 0 hints；`npm run build` 生成 19 页。
+验证：`npm run check` 检查 19 个文件，0 errors / 0 warnings / 0 hints；`npm run build` 生成 18 页。
 此前浏览器验证过桌面导航、390px 手机布局无横向溢出、手机导航展开与跳转，
 以及浅色、深色、跟随系统和跨页面主题保存。
 
