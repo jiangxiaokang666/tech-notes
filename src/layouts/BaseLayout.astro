@@ -1,11 +1,10 @@
 ---
 import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
 import { site } from '../lib/site';
 import '../styles/global.css';
 interface Props { title: string; description?: string; }
 const { title, description = site.description } = Astro.props;
-const pageTitle = title === site.name ? title : `${title} · ${site.name}`;
+const pageTitle = title === site.name ? title : `${title} | ${site.name}`;
 ---
 <!doctype html>
 <html lang="zh-CN">
@@ -32,6 +31,5 @@ const pageTitle = title === site.name ? title : `${title} · ${site.name}`;
     <a class="skip-link" href="#main-content">跳转到主要内容</a>
     <Header />
     <main id="main-content" class="container" tabindex="-1"><slot /></main>
-    <Footer />
   </body>
 </html>

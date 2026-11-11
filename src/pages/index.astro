@@ -2,39 +2,30 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import { getPublishedCollection } from '../lib/content';
-import { routes, sections, site } from '../lib/site';
-const [learning, algorithms, practices, thoughts] = await Promise.all([
+import { routes, site } from '../lib/site';
+const [learning, algorithms] = await Promise.all([
   getPublishedCollection('learning'),
   getPublishedCollection('algorithms'),
-  getPublishedCollection('practices'),
-  getPublishedCollection('thoughts'),
 ]);
-const all = [...learning, ...algorithms, ...practices, ...thoughts].sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime() || a.id.localeCompare(b.id));
+const all = [...learning, ...algorithms].sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime() || a.id.localeCompare(b.id));
 const tagCount = new Set(all.flatMap((article) => article.data.tags)).size;
 const chapters = learning;
 const topics = Array.from(new Set(chapters.map((entry) => entry.data.series))).map((id) => {
   const entries = chapters.filter((entry) => entry.data.series === id);
   return { id, title: entries[0].data.seriesTitle, category: entries[0].data.category, count: entries.length };
 });
-const counts = [learning.length, algorithms.length, practices.length, thoughts.length];
 ---
 <BaseLayout title={site.name}>
   <section class="hero" aria-labelledby="intro-title">
-    <div class="eyebrow"><span class="status-dot" aria-hidden="true"></span> 学习 / 实践 / 思考</div>
-    <h1 id="intro-title">把知识写下来，<br /><span>让理解更进一步。</span></h1>
-    <p class="hero-description">{site.description}</p>
+    <h1 id="intro-title" class="visually-hidden">{site.name}，{site.description}</h1>
     <div class="hero-actions"><a class="button primary" href={routes.section('learning')}>浏览学习笔记 <span aria-hidden="true">↗</span></a><button class="button search-preview" disabled aria-describedby="search-status"><span aria-hidden="true">⌕</span> 搜索全部文章</button></div>
     <p id="search-status" class="small muted">搜索即将开放</p>
     <div class="hero-index" aria-hidden="true"><span>TECH NOTES</span><span>一个持续生长的知识库</span><span>[ RECORD · REFLECT · REPEAT ]</span></div>
   </section>
   <section class="stats" aria-label="已发布内容统计">
-    {[['学习笔记', learning.length], ['算法题解', algorithms.length], ['技术实践', practices.length], ['内容标签', tagCount]].map(([label, value]) => <div><strong>{String(value).padStart(2, '0')}</strong><span>{label}</span></div>)}
+    {[['学习笔记', learning.length], ['算法题解', algorithms.length], ['内容标签', tagCount]].map(([label, value]) => <div><strong>{String(value).padStart(2, '0')}</strong><span>{label}</span></div>)}
   </section>
   <p class="sample-note">已收录南京大学生成式软件工程学习笔记；示例内容均已标注，草稿不计入统计。</p>
-  <section class="section-block" aria-labelledby="categories-title">
-    <div class="section-heading"><div><span class="eyebrow">EXPLORE</span><h2 id="categories-title">知识的四个方向</h2></div><span class="muted small">从一个问题，走向更多理解。</span></div>
-    <div class="category-grid">{sections.map((section, index) => <a class="category-card" href={routes.section(section.key)}><div class="card-top"><span>{section.mark}</span><span aria-hidden="true">↗</span></div><h3>{section.label}</h3><p>{section.description}</p><span class="small">{counts[index]} 篇已发布内容</span></a>)}</div>
-  </section>
   <div class="home-columns">
     <section class="section-block" aria-labelledby="latest-title">
       <div class="section-heading"><div><span class="eyebrow">RECENT NOTES</span><h2 id="latest-title">最新文章</h2></div><span class="muted small">按发布日期排序</span></div>
@@ -43,7 +34,6 @@ const counts = [learning.length, algorithms.length, practices.length, thoughts.l
     <aside class="section-block" aria-labelledby="learning-title">
       <div class="section-heading"><div><span class="eyebrow">LEARNING IN PUBLIC</span><h2 id="learning-title">正在学习</h2></div></div>
       <div class="topic-panel"><p class="small muted">从已发布章节汇总学习专题</p>{topics.length ? topics.map((topic) => <div class="topic"><span class="topic-category">{topic.category}</span><h3><a href={routes.learningSeries(topic.id)}>{topic.title}</a></h3><p>{topic.count} 个已发布章节</p><a class="text-link" href={routes.learningSeries(topic.id)}>查看专题目录 →</a></div>) : <p>还没有学习专题。</p>}</div>
-      <div class="note-panel"><span class="eyebrow">A NOTE TO SELF</span><p>理解需要时间，<br />记录让每一步都有迹可循。</p><a href={routes.about}>了解 Tech Notes <span aria-hidden="true">→</span></a></div>
     </aside>
   </div>
 </BaseLayout>

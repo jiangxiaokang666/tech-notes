@@ -1,5 +1,5 @@
 export const site = {
-  name: "Tech Notes",
+  name: "JXK · Tech Notes",
   description: "记录技术学习，分享工程实践，沉淀编程知识。",
 };
 
@@ -33,16 +33,19 @@ export const sections = [
 export const routes = {
   home: "/",
   section: (key: (typeof sections)[number]["key"]) => `/${key}/`,
-  about: "/about/",
   learningSeries: (series: string) => `/learning/${series}/`,
   learningArticle: (id: string) => `/learning/${id}/`,
 };
 
+// 技术实践与技术思考已移出第一阶段范围，暂不提供入口。
+export const activeSections = sections.filter(
+  (section) => section.key === "learning" || section.key === "algorithms",
+);
+
 export const navigation = [
   { label: "首页", href: routes.home },
-  ...sections.map((section) => ({
+  ...activeSections.map((section) => ({
     label: section.label,
     href: routes.section(section.key),
   })),
-  { label: "关于", href: routes.about },
 ];

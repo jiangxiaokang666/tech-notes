@@ -1,11 +1,11 @@
 ---
-import { navigation, routes } from '../lib/site';
+import { navigation, routes, site } from '../lib/site';
 import ThemeToggle from './ThemeToggle.astro';
 const current = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---
 <header class="site-header">
   <div class="container header-inner">
-    <a class="brand" href={routes.home} aria-label="Tech Notes 首页"><span class="brand-symbol" aria-hidden="true">tn<span>.</span></span><span>Tech Notes</span></a>
+    <a class="brand" href={routes.home} aria-label={`${site.name} 首页`}>{site.name}</a>
     <nav class="desktop-navigation" aria-label="主导航">
       {navigation.map(({ href, label }) => <a href={href} aria-current={current === (href.replace(/\/$/, '') || '/') ? 'page' : undefined}>{label}</a>)}
     </nav>

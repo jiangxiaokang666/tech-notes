@@ -1,13 +1,13 @@
 ---
 title: Git 常用操作速查：cherry-pick、merge、restore
-description: 以「命令 + 典型场景 + 易错点」记录日常最容易用错的 Git 操作，并给出冲突处理与误操作后的补救路径。
+description: 以「命令 + 典型场景 + 易错点」记录日常最容易用错的 Git 操作：cherry-pick、merge 与 restore。
 pubDate: 2026-11-11
 category: 开发工具
 tags: [Git, 版本控制, 冲突处理]
 type: practice
 ---
 
-本文只记录实际会照抄的命令。每条都标出适用场景和最常见的误操作，遇到问题时先看「误操作急救表」。
+本文只记录实际会照抄的命令，每条都标出适用场景和最常见的误操作。
 
 ## 先建立三个坐标
 
@@ -110,86 +110,6 @@ git restore --staged .                         # 全部取消暂存
 - 不带 `--staged` 时只改工作区，容易出现"以为撤销了提交，其实只是改了文件"。
 - 丢弃的未暂存修改不进 reflog，无法找回（只有 IDE 本地历史可能留有副本）。
 - 想恢复被删文件：`git restore <file>`；想整体回到某次提交用 `git restore --source=<hash> --worktree .`，但别在共享分支上这么做。
-
-## 只同步另一个分支的几个文件
-
-**场景**：只要 main 上几个配置文件或工具脚本，不想 merge 整个分支，也不想把对方的提交历史带过来。
-
-先比对，别直接覆盖：
-
-```bash
-git fetch origin                                  # 跨远端时先取最新
-git diff --stat origin/main -- src/config/        # 目录级差异概览
-git diff origin/main -- src/config/app.ts         # 具体改了什么
-```
-
-按路径取目标分支的**文件快照**，不产生提交：
-
-```bash
-git restore --source=origin/main -- src/config/app.ts                    # 只写工作区，不进暂存区
-git restore --source=origin/main --worktree -- src/config/               # 整个目录
-git restore --source=origin/main --staged --worktree -- src/config/app.ts # 直接进暂存区
-```
-
-老写法，注意它会**同时写入索引**（等价于 `--staged --worktree`）：
-
-```bash
-git checkout origin/main -- src/config/app.ts
-```
-
-只要内容、先不落盘时用重定向，完全不碰索引：
-
-```bash
-git show origin/main:src/config/app.ts > src/config/app.ts
-```
-
-只想应用**某次提交里这几个文件的改动**（而不是目标分支的整体快照）：
-
-```bash
-git diff 3f2a1bc^ 3f2a1bc -- src/config/app.ts | git apply --3way
-```
-
-`--3way` 在补丁对不上时用三方合并兜底，并且会直接把结果放进暂存区；失败则不写入，比 `patch` 更安全。
-
-收尾与确认：
-
-```bash
-git status
-git diff --staged
-git commit -m "chore: 同步 main 的配置文件"
-```
-
-**易错点**
-
-- 这几种写法都只按路径取快照，历史里不会记录"文件来自哪个分支"，来源要写进提交信息，否则日后只能靠猜。
-- 都会覆盖本地未提交的修改：动手前 `git stash`，或先用 `git diff <branch> -- <path>` 确认这些改动确实可以丢弃。
-- 源分支有、本地没有的文件会被创建为**未跟踪文件**，要 `git add` 才会进入提交；源分支上删除的文件不会因此删掉本地文件。
-- `git restore --source` 是整体覆盖，没有冲突合并过程。需要保留自己的改动逐行合并时，改用 `git diff ... | git apply --3way`。
-- 路径写错会报 `pathspec ... did not match`，先用 `git ls-tree origin/main -- <path>` 确认目标分支里的确切路径和大小写。
-- 别在脏工作区执行 `git checkout origin/main -- .`，一次覆盖所有路径后，很难再挑出哪些是自己的改动。
-
-## 撤销已提交：reset 还是 revert
-
-| 命令 | 作用范围 | 用在哪 |
-| --- | --- | --- |
-| `git reset --soft HEAD~1` | 只移动分支指针，改动留在暂存区 | 本地改提交信息或合并提交 |
-| `git reset HEAD~1` | 指针回退，改动留在工作区（默认 `--mixed`） | 本地拆提交 |
-| `git reset --hard HEAD~1` | 指针、暂存区、工作区全部回退 | 本地丢弃提交，需确认没有未提交改动 |
-| `git revert <hash>` | 追加一个反向提交 | 已推送的共享分支 |
-
-判断标准：提交是否已经推到别人会拉取的分支。推过就用 `revert`，不要在共享分支上 `reset --hard` 后强推。
-
-## 误操作急救表
-
-| 发生了什么 | 怎么查 | 怎么退 |
-| --- | --- | --- |
-| 提交信息写错，未推送 | `git log -1` | `git commit --amend` |
-| 提交内容漏了文件，未推送 | `git show --stat HEAD` | `git add <file>` 后 `git commit --amend --no-edit` |
-| 提交到错误分支，未推送 | `git log --oneline -3` | 在目标分支 `git cherry-pick <hash>`，再在原分支 `git reset --hard HEAD~1` |
-| 刚 `reset --hard` 后悔 | `git reflog -20` | `git reset --hard <reflog 里的哈希>` |
-| 删掉的分支还没合并 | `git reflog` 或 `git branch --contains` | `git branch <name> <hash>` |
-| 合并/变基到一半发现方向错了 | `git status` 提示 in progress | `git merge --abort` 或 `git rebase --abort` |
-| 误提交了大文件或密钥 | `git log --stat` | 未推送可 `commit --amend` 或交互式 rebase；已推送视为泄露，先轮换凭据再考虑 `git filter-repo` |
 
 ## 日常习惯
 
