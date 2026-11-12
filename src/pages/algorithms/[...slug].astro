@@ -1,0 +1,53 @@
+---
+import { Code } from 'astro:components';
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublishedCollection } from '../../lib/content';
+import { routes } from '../../lib/site';
+import '../../styles/article.css';
+
+export async function getStaticPaths() {
+  return (await getPublishedCollection('algorithms')).map((article) => ({
+    params: { slug: article.id },
+    props: { article },
+  }));
+}
+
+const sources = import.meta.glob<string>('/src/content/algorithms/**/*.cpp', {
+  query: '?raw',
+  import: 'default',
+});
+const { article } = Astro.props;
+const { Content } = await render(article);
+const implementation = article.data.implementation;
+let source: string | undefined;
+
+if (implementation) {
+  const directory = article.filePath?.replace(/\\/g, '/').replace(/\/[^/]+$/, '');
+  const loadSource = sources[`/${directory}/${implementation}`];
+  if (!loadSource) {
+    throw new Error(`${article.id}: C++ source file "${implementation}" was not found next to the Markdown file.`);
+  }
+  source = await loadSource();
+}
+---
+<BaseLayout title={article.data.title} description={article.data.description}>
+  <nav class="reading-breadcrumb" aria-label="面包屑">
+    <a href={routes.section('algorithms')}>算法题解</a>
+  </nav>
+  <article class="reading-article">
+    <header class="article-header">
+      <h1>{article.data.title}</h1>
+      <p>{article.data.description}</p>
+    </header>
+    <div class="article-content">
+      <Content />
+      {source !== undefined && (
+        <section>
+          <h2 id="cpp-implementation">C++ 实现</h2>
+          <Code code={source} lang="cpp" />
+        </section>
+      )}
+    </div>
+  </article>
+</BaseLayout>

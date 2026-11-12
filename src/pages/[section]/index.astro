@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { sections, routes } from '../../lib/site';
 export function getStaticPaths() {
-  return sections.filter((section) => section.key !== 'learning').map((section) => ({ params: { section: section.key }, props: { section } }));
+  return sections.filter((section) => section.key !== 'learning' && section.key !== 'algorithms').map((section) => ({ params: { section: section.key }, props: { section } }));
 }
 const { section } = Astro.props;
 ---

@@ -101,7 +101,7 @@ Zod Schema 位于 `src/lib/content-schemas.ts`，使用 Astro 提供的 `astro/z
 新增学习专题时，在 `src/content/learning/` 下创建专题目录，参考
 `cpp/object-model/01-memory-layout.md`；同专题各章使用相同的 `series` 与 `seriesTitle`，
 按 `seriesOrder` 指定章节顺序。新增章节时添加新的 Markdown 文件并设置序号。
-新增算法题解参考 `algorithms/array/two-sum.md`，填写难度和题目来源。
+新增算法题解参考 `src/content/algorithms/graph/hanoi-unsorted.md`，填写难度和题目来源。需要展示独立的 C++ 源码时，将 `.cpp` 放在 Markdown 同目录，并在 frontmatter 填写 `implementation: 文件名.cpp`。题解页会在正文后展示带语法高亮的源码。
 新增实践参考 `practices/performance/measurement-checklist.md`；
 新增思考参考 `thoughts/engineering-tradeoffs.md`。
 示例文章的标记应保留；编写正式内容时替换为自己的实际内容。
@@ -167,7 +167,7 @@ npm run build
 供搜索引擎与读屏软件使用，视觉上不显示。首页统计只计学习笔记、算法题解与标签数量；
 正文不再有分类入口卡片，统计之后直接是“最新文章”和“正在学习”两栏。
 “正在学习”仅展示已有章节的专题，未虚构完成状态或进度百分比。
-搜索按钮显示“即将开放”，属于第二阶段；算法题解详情页尚未实现，卡片仍标注“正文待开放”。
+搜索按钮显示“即将开放”，属于第二阶段。算法题解卡片链接到各自的详情页。
 学习笔记使用独立路由；其他分类基础页由 `src/pages/[section]/index.astro` 生成，后续开发相应模块时替换，
 避免与静态分类路由重复。首页不写死临时域名。
 顶部导航为 首页 / 学习笔记 / 算法题解，由 `src/lib/site.ts` 导出；关于页面已随本次调整移除，

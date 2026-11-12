@@ -35,6 +35,7 @@ export const routes = {
   section: (key: (typeof sections)[number]["key"]) => `/${key}/`,
   learningSeries: (series: string) => `/learning/${series}/`,
   learningArticle: (id: string) => `/learning/${id}/`,
+  algorithmArticle: (id: string) => `/algorithms/${id}/`,
 };
 
 // 技术实践与技术思考已移出第一阶段范围，暂不提供入口。

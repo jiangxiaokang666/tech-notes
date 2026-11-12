@@ -1,0 +1,13 @@
+---
+import ArticleCard from '../../components/ArticleCard.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublishedCollection } from '../../lib/content';
+
+const articles = await getPublishedCollection('algorithms');
+---
+<BaseLayout title="算法题解" description="记录题目、解题思路和实现。">
+  <section class="page-intro"><h1>算法题解</h1></section>
+  <div>
+    {articles.length ? articles.map((article) => <ArticleCard article={article} />) : <p class="empty-state">还没有已发布的题解。</p>}
+  </div>
+</BaseLayout>

@@ -33,6 +33,7 @@ export const algorithmSchema = z.object({
   source: text,
   sourceUrl: z.url({ protocol: /^https?$/, error: '原题链接必须是有效的 HTTP 或 HTTPS URL' }),
   language: text.default('cpp'),
+  implementation: text.regex(/^[\w-]+\.cpp$/).optional(),
 });
 
 export const practiceSchema = z.object({ ...common, type: z.literal('practice') });
