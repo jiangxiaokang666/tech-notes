@@ -8,7 +8,6 @@ const [learning, algorithms] = await Promise.all([
   getPublishedCollection('algorithms'),
 ]);
 const all = [...learning, ...algorithms].sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime() || a.id.localeCompare(b.id));
-const tagCount = new Set(all.flatMap((article) => article.data.tags)).size;
 const chapters = learning;
 const topics = Array.from(new Set(chapters.map((entry) => entry.data.series))).map((id) => {
   const entries = chapters.filter((entry) => entry.data.series === id);
@@ -17,9 +16,6 @@ const topics = Array.from(new Set(chapters.map((entry) => entry.data.series))).m
 ---
 <BaseLayout title={site.name}>
   <h1 class="visually-hidden">{site.name}，{site.description}</h1>
-  <section class="stats" aria-label="已发布内容统计">
-    {[['学习笔记', learning.length], ['算法题解', algorithms.length], ['内容标签', tagCount]].map(([label, value]) => <div><strong>{String(value).padStart(2, '0')}</strong><span>{label}</span></div>)}
-  </section>
   <div class="home-columns">
     <section class="section-block" aria-labelledby="latest-title">
       <div class="section-heading"><div><span class="eyebrow">RECENT NOTES</span><h2 id="latest-title">最新文章</h2></div><span class="muted small">按发布日期排序</span></div>
