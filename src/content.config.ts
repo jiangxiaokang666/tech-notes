@@ -18,11 +18,13 @@ export const collections = {
     schema: algorithmSchema,
   }),
   practices: defineCollection({
-    loader: glob({ pattern: '**/*.md', base: './src/content/practices' }),
+    // Reserved for phase two; enable glob loading when articles are added.
+    loader: async () => [],
     schema: practiceSchema,
   }),
   thoughts: defineCollection({
-    loader: glob({ pattern: '**/*.md', base: './src/content/thoughts' }),
+    // Reserved for phase two; enable glob loading when articles are added.
+    loader: async () => [],
     schema: thoughtSchema,
   }),
 };

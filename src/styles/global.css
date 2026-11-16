@@ -197,11 +197,6 @@ main:focus {
   background: var(--surface);
   color: var(--ink);
 }
-.hero {
-  position: relative;
-  padding-block: 56px 44px;
-  overflow: hidden;
-}
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -212,13 +207,6 @@ main:focus {
   clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
-}
-.hero-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 30px;
-  margin-bottom: 10px;
-  flex-wrap: wrap;
 }
 .button {
   display: inline-flex;
@@ -238,34 +226,10 @@ main:focus {
   color: var(--accent-text);
   filter: brightness(1.1);
 }
-.search-preview {
-  background: var(--surface);
-  color: var(--muted);
-  cursor: not-allowed;
-  gap: 10px;
-}
-.hero-index {
-  position: absolute;
-  right: 0;
-  top: 56px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 15px;
-  color: var(--muted);
-  font-family: Consolas, monospace;
-  font-size: 0.72rem;
-  border-right: 2px solid var(--line);
-  padding: 16px 24px;
-}
-.hero-index span:first-child {
-  font-size: 1.5rem;
-  letter-spacing: 0.1em;
-  color: var(--ink);
-}
 .stats {
+  margin-top: 32px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   border-block: 1px solid var(--line);
   padding-block: 23px;
 }
@@ -291,11 +255,6 @@ main:focus {
 .stats span {
   font-size: 0.8rem;
   color: var(--muted);
-}
-.sample-note {
-  font-size: 0.75rem;
-  color: var(--muted);
-  margin: 12px 0 0;
 }
 .section-block {
   padding-block: 46px 0;
@@ -452,9 +411,6 @@ main:focus {
   .navigation nav {
     gap: 16px;
   }
-  .hero-index {
-    display: none;
-  }
   .stats > div {
     padding-inline: 16px;
     gap: 10px;
@@ -501,9 +457,6 @@ main:focus {
     border-bottom: 0;
     border-left: 2px solid transparent;
   }
-  .hero {
-    padding-block: 48px 36px;
-  }
   .stats > div {
     flex-direction: column;
     gap: 3px;
@@ -519,9 +472,6 @@ main:focus {
 @media (max-width: 600px) {
   .container {
     padding-inline: 20px;
-  }
-  .hero-actions {
-    gap: 10px;
   }
   .button {
     gap: 14px;

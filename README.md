@@ -6,7 +6,7 @@
 
 已完成工程初始化、内容模型与基础 UI，并迁入南京大学生成式软件工程的 8 篇个人学习笔记。
 学习笔记模块已支持分类、专题目录、章节阅读、相邻章节导航与 H2/H3 目录。
-仓库内目前包含 9 篇真实内容（8 篇南大课程笔记、1 篇 Git 操作速查）和 6 篇明确标注的示例（其中 1 篇草稿）。
+仓库内目前包含 12 篇正式内容：8 篇南大课程笔记、Git 操作速查、std::map 插入技巧、游戏引擎基础概念和汉诺塔题解。占位示例文章已移除。
 Git 操作速查以学习笔记的形式组织，专题标识 `git-daily`、专题名「Git 日常操作」，因此能直接使用学习笔记的阅读页。
 第一阶段范围已收缩到 Task 5（算法题解）：技术实践与技术思考模块页面、Pagefind 搜索与阅读体验增强、
 全站验收移出本次范围，记录在 `docs/requirements-phase1.md` 的 1.3 节。
@@ -69,7 +69,7 @@ npm run preview
 
 ## 内容模型与新增文章
 
-`src/content.config.ts` 使用 Astro Content Layer 的 `glob` loader，递归加载四个目录中的
+`src/content.config.ts` 使用 Astro Content Layer 的 `glob` loader，递归加载学习笔记与算法题解目录中的
 `**/*.md`。集合名为 `learning`、`algorithms`、`practices`、`thoughts`。
 Zod Schema 位于 `src/lib/content-schemas.ts`，使用 Astro 提供的 `astro/zod`，无需额外依赖。
 
@@ -95,16 +95,14 @@ Zod Schema 位于 `src/lib/content-schemas.ts`，使用 Astro 提供的 `astro/z
 `seriesOrder` 必须为正整数；`series` 使用英文小写、数字及连字符。
 文章路径同样使用英文小写、数字及连字符，避免中文 URL；发布后保持文件路径稳定。
 分类使用文本字段，可通过内容增加分类，无需修改页面组件。
-四个集合始终加载并校验，但页面目前只展示 `learning` 与 `algorithms`；
-`practices`、`thoughts` 的列表与详情页属于第二阶段，内容可先提交，暂不出现在站点上。
+`learning` 与 `algorithms` 加载并校验文章；`practices`、`thoughts` 暂用空 loader，保留 Schema 与集合类型，避免空目录警告。
+后续启用技术实践与技术思考时，需在 `src/content.config.ts` 将对应 loader 改为 `glob({ pattern: '**/*.md', base: './src/content/<集合名>' })`。
 
 新增学习专题时，在 `src/content/learning/` 下创建专题目录，参考
-`cpp/object-model/01-memory-layout.md`；同专题各章使用相同的 `series` 与 `seriesTitle`，
+`ai-engineering/nju-gse/01-welcome-to-the-future.md`；同专题各章使用相同的 `series` 与 `seriesTitle`，
 按 `seriesOrder` 指定章节顺序。新增章节时添加新的 Markdown 文件并设置序号。
 新增算法题解参考 `src/content/algorithms/graph/hanoi-unsorted.md`，填写难度和题目来源。需要展示独立的 C++ 源码时，将 `.cpp` 放在 Markdown 同目录，并在 frontmatter 填写 `implementation: 文件名.cpp`。题解页会在正文后展示带语法高亮的源码。
-新增实践参考 `practices/performance/measurement-checklist.md`；
-新增思考参考 `thoughts/engineering-tradeoffs.md`。
-示例文章的标记应保留；编写正式内容时替换为自己的实际内容。
+新增实践与思考文章按对应集合的字段规则编写。
 
 实践文章的最小 Frontmatter：
 
@@ -163,11 +161,11 @@ npm run build
 移动端菜单使用 `details/summary`，支持键盘展开、收起，Escape 可关闭并返回菜单焦点。
 提供跳转到主要内容的键盘入口、焦点样式以及减少动态效果设置。
 
-首页 hero 只保留两个操作按钮和“搜索即将开放”提示；站点介绍以 `visually-hidden` 的 `h1` 保留，
+首页已移除顶部介绍区、操作按钮与搜索占位提示；站点介绍以 `visually-hidden` 的 `h1` 保留，
 供搜索引擎与读屏软件使用，视觉上不显示。首页统计只计学习笔记、算法题解与标签数量；
 正文不再有分类入口卡片，统计之后直接是“最新文章”和“正在学习”两栏。
 “正在学习”仅展示已有章节的专题，未虚构完成状态或进度百分比。
-搜索按钮显示“即将开放”，属于第二阶段。算法题解卡片链接到各自的详情页。
+搜索功能属于第二阶段。算法题解卡片链接到各自的详情页。
 学习笔记使用独立路由；其他分类基础页由 `src/pages/[section]/index.astro` 生成，后续开发相应模块时替换，
 避免与静态分类路由重复。首页不写死临时域名。
 顶部导航为 首页 / 学习笔记 / 算法题解，由 `src/lib/site.ts` 导出；关于页面已随本次调整移除，

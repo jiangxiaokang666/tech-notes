@@ -84,9 +84,13 @@ test('实际 glob 加载、Markdown 渲染、公开查询及错误内容构建�
   const token = randomUUID();
   const route = resolve('src/pages', `__content-check-${token}.json.ts`);
   const fixture = resolve('src/content/algorithms', `invalid-${token}.md`);
+  const draftFixture = resolve('src/content/algorithms', `draft-${token}.md`);
   let routeCreated = false;
   let fixtureCreated = false;
+  let draftCreated = false;
   try {
+    writeFileSync(draftFixture, `---\ntitle: 测试草稿\ndescription: 验证草稿过滤\npubDate: 2026-11-03\ncategory: 测试\ntype: algorithm\ndifficulty: Easy\nsource: 测试\nsourceUrl: https://example.com\ndraft: true\n---\n## 测试正文\n`, { flag: 'wx' });
+    draftCreated = true;
     writeFileSync(route, `
 import assert from 'node:assert/strict';
 import { getCollection } from 'astro:content';
@@ -95,7 +99,6 @@ export async function GET() {
   for (const name of articleCollections) {
     const all = await getCollection(name);
     const published = await getPublishedCollection(name);
-    assert.ok(all.length > 0);
     assert.deepEqual(published.map(e => e.id).sort(), all.filter(e => !e.data.draft).map(e => e.id).sort());
     for (const entry of published) {
       assert.ok(entry.data.pubDate instanceof Date);
@@ -103,14 +106,12 @@ export async function GET() {
       assert.ok(entry.body?.trim().length > 0);
     }
   }
-  const thoughts = await getCollection('thoughts');
-  const draft = thoughts.find(e => e.id === 'draft-example');
-  assert.ok(draft?.data.draft);
-  assert.equal(await getPublishedEntry('thoughts', 'draft-example'), undefined);
-  assert.equal(await getPublishedEntry('thoughts', 'missing'), undefined);
-  assert.ok(await getPublishedEntry('thoughts', 'engineering-tradeoffs'));
-  const chapters = (await getPublishedCollection('learning')).filter(e => e.data.series === 'cpp-object-model');
-  assert.deepEqual(chapters.map(e => e.data.seriesOrder).sort((a,b) => a-b), [1, 2]);
+  const algorithms = await getCollection('algorithms');
+  assert.ok(algorithms.find(e => e.id === 'draft-${token}')?.data.draft);
+  assert.equal(await getPublishedEntry('algorithms', 'draft-${token}'), undefined);
+  assert.equal(await getPublishedEntry('algorithms', 'missing'), undefined);
+  assert.ok(await getPublishedEntry('algorithms', 'graph/hanoi-unsorted'));
+  const chapters = await getPublishedCollection('learning');
   assert.ok(chapters.some(e => e.rendered?.html.includes('<table>')));
   assert.ok(chapters.some(e => e.rendered?.html.includes('<pre')));
   const imported = (await getPublishedCollection('learning')).filter(e => e.data.series === 'nju-generative-software-engineering');
@@ -133,5 +134,6 @@ export async function GET() {
   } finally {
     if (routeCreated) unlinkSync(route);
     if (fixtureCreated) unlinkSync(fixture);
+    if (draftCreated) unlinkSync(draftFixture);
   }
 });

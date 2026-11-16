@@ -16,16 +16,10 @@ const topics = Array.from(new Set(chapters.map((entry) => entry.data.series))).m
 });
 ---
 <BaseLayout title={site.name}>
-  <section class="hero" aria-labelledby="intro-title">
-    <h1 id="intro-title" class="visually-hidden">{site.name}，{site.description}</h1>
-    <div class="hero-actions"><a class="button primary" href={routes.section('learning')}>浏览学习笔记 <span aria-hidden="true">↗</span></a><button class="button search-preview" disabled aria-describedby="search-status"><span aria-hidden="true">⌕</span> 搜索全部文章</button></div>
-    <p id="search-status" class="small muted">搜索即将开放</p>
-    <div class="hero-index" aria-hidden="true"><span>TECH NOTES</span><span>一个持续生长的知识库</span><span>[ RECORD · REFLECT · REPEAT ]</span></div>
-  </section>
+  <h1 class="visually-hidden">{site.name}，{site.description}</h1>
   <section class="stats" aria-label="已发布内容统计">
     {[['学习笔记', learning.length], ['算法题解', algorithms.length], ['内容标签', tagCount]].map(([label, value]) => <div><strong>{String(value).padStart(2, '0')}</strong><span>{label}</span></div>)}
   </section>
-  <p class="sample-note">已收录南京大学生成式软件工程学习笔记；示例内容均已标注，草稿不计入统计。</p>
   <div class="home-columns">
     <section class="section-block" aria-labelledby="latest-title">
       <div class="section-heading"><div><span class="eyebrow">RECENT NOTES</span><h2 id="latest-title">最新文章</h2></div><span class="muted small">按发布日期排序</span></div>
