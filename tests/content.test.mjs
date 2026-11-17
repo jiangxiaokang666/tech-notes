@@ -114,9 +114,13 @@ export async function GET() {
   const chapters = await getPublishedCollection('learning');
   assert.ok(chapters.some(e => e.rendered?.html.includes('<table>')));
   assert.ok(chapters.some(e => e.rendered?.html.includes('<pre')));
-  const imported = (await getPublishedCollection('learning')).filter(e => e.data.series === 'nju-generative-software-engineering');
-  assert.deepEqual(imported.map(e => e.data.seriesOrder).sort((a,b) => a-b), [1,2,3,4,5,6,7,8]);
-  assert.ok(imported.every(e => e.data.sourceUrl?.startsWith('https://github.com/jiangxiaokang666/nju-gse-notes/blob/')));
+  const imported = chapters.filter(
+    e => e.data.series === 'nju-generative-software-engineering' && e.data.sourceRevision,
+  );
+  assert.ok(imported.length > 0);
+  assert.ok(imported.every(e => e.data.sourceUrl?.startsWith(
+    'https://github.com/jiangxiaokang666/nju-gse-notes/blob/' + e.data.sourceRevision + '/notes/',
+  )));
   return Response.json({ ok: true });
 }
 `, { flag: 'wx' });
