@@ -17,3 +17,12 @@
 | `notes/6_Agent_Native开发.md` | `src/content/learning/ai-engineering/nju-gse/06-agent-native-development.md` |
 | `notes/7_DeepSeek_Harness.md` | `src/content/learning/ai-engineering/nju-gse/07-deepseek-harness.md` |
 | `notes/8_软件的演化.md` | `src/content/learning/ai-engineering/nju-gse/08-software-evolution.md` |
+
+## 软件质量保障笔记
+
+来源提交 `8611540fa17673a300887f51da47a573ccea18fa`，同步日期 2026-11-17。正文保留第 11、12 讲的原文链接。
+
+| 原文件 | 迁入文件 |
+| --- | --- |
+| `notes/9_软件质量保障(1).md` | `src/content/learning/ai-engineering/nju-gse/09-software-quality-assurance-part-1.md` |
+| `notes/10_软件质量保障(2).md` | `src/content/learning/ai-engineering/nju-gse/10-software-quality-assurance-part-2.md` |
